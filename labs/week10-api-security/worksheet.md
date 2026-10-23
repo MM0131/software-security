@@ -90,7 +90,26 @@ Mitigation — API4:2023 (Unrestricted Resource Consumption). The insecure /api/
 ### Task 4 — Bonus: crAPI Raid (optional, 20 min)
 Against your own OWASP crAPI instance (`git clone https://github.com/OWASP/crAPI.git`), capture one BOLA or mass-assignment flag.
 **Deliverable:** flag + endpoint + which API Top 10 id it maps to.
-Ans = 
+Ans = ![alt text](image-4.png)
+Flag/endpoint captured against local OWASP crAPI instance (docker compose, deploy/docker):
+
+Endpoint: GET /identity/api/v2/vehicle/{vehicleId}/location
+(http://localhost:8888/identity/api/v2/vehicle/8d5a7b43-a23f-4d82-987a-51f624b56cfd/location)
+
+OWASP API id: API1:2023 — Broken Object Level Authorization (BOLA)
+
+Exploit: Created two accounts, userA@test.com (owns 1 vehicle, VIN 21Y9K2M5LS15AF8N1) and
+userB@test.com (owns 0 vehicles — confirmed via GET /vehicle/vehicles returning []).
+Logged in as userB, took userB's own Authorization token, then requested userA's vehicle's
+location endpoint directly using userA's known vehicle UUID. The server returned 200 OK
+with userA's vehicle location and personal details, despite userB having no relationship
+to that vehicle — no ownership check was performed server-side.
+
+Response leaked:
+{"carId":"8d5a7b43-a23f-4d82-987a-51f624b56cfd",
+ "vehicleLocation":{"id":1,"latitude":"32.778889","longitude":"-91.919243"},
+ "fullName":"HATAICHANOK YIMJAN","email":"usera@test.com"}
+
 
 ### Task 5 — Defend / fix it (20 min)
 **Goal:** Explain the fixes using the secure reference `solution_api.py`.
