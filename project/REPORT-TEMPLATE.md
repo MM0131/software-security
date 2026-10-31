@@ -8,10 +8,10 @@
 | Field | Value |
 |---|---|
 | Team name | |
-| Members (name + ID) | |
-| Target application | |
+| Members (name + ID) | Hathaichanok Yimjan (6631503045), Korrakit Lhakdee (6631503102) |
+| Target application | NoteVault (Python/Flask, starter-app)|
 | Repository URL | |
-| Date | |
+| Date | 6 November 2026 |
 
 ## AI-tool usage disclosure
 *Academic integrity: state how you used any AI tools (ChatGPT, Copilot, etc.) — e.g. searching, coding, translating, drafting. "None" is a valid answer.*
