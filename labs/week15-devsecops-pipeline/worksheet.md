@@ -155,6 +155,7 @@ Passing run:https://github.com/MM0131/week15-6631503045/actions/runs/41691780082
 
 - **Task 4 — Red team: Break the Build (40 min).** *Goal:* make the gate say **no**. *Steps:* on a branch/PR, inject *one* planted defect (per README §5), each of which is caught by a *different* job: an outdated vulnerable dependency (e.g. an old `urllib3`) → Trivy SCA; a Dockerfile that runs as **root** — drop the `USER` line, or write `USER root` → Trivy config (`DS-0002`, HIGH); or a hard-coded token → Gitleaks. Open the PR and watch the matching gate step fail. *Deliverable:* screenshot of the **failing** gate step + which job caught it (Trivy SCA / Trivy config / Gitleaks) and which `exit-code: "1"` / `--error` step enforced it.
   > **Why root and not `chmod 777`.** Both gate steps filter to `--severity HIGH,CRITICAL`, and Trivy's Dockerfile scanner has no rule for `chmod` at all — it checks instruction-level `RUN`/`COPY` semantics, exactly as Week 13 Task 1 says. `chmod 777` therefore returns **nothing**, at any severity, and the build goes green: a defect that slips the gate is a Task 5 *Red point*, not a Task 4 screenshot. `:latest` is no good either — that is `DS-0001` and Trivy rates it MEDIUM, which this gate filters out. Running as root is `DS-0002` HIGH, so it fails the build for real.
+  
   Ans = I added urllib3==1.26.4 to red-demo/requirements.txt on branch red/vulnerable-dependency and opened a pull request. Trivy SCA reported eight HIGH-severity vulnerabilities in this dependency.
 
 The “Gate — fail on HIGH/CRITICAL (SCA)” step enforced exit-code: "1" and failed the build. This demonstrates that the dependency security gate rejected the planted defect, supporting OWASP A03 Software Supply Chain Failures.
@@ -185,7 +186,8 @@ Evidence: https://github.com/MM0131/week15-6631503045/actions/runs/41693463359
 ## Part 4 — Reflection
 
 1. **Mapping.** For three controls you exercised, give: control → A09/A10 (or A02/A03 for a scanner) → CWE → one-line rationale.
-Ans = 
+Ans =
+
 | Control | OWASP 2025 | CWE | Rationale |
 |---|---|---|---|
 | Structured authentication and authorization logging without token values | A09 Security Logging & Alerting Failures | CWE-778: Insufficient Logging | Recording events, outcomes, and safe user identifiers supports investigation and alerting. |
